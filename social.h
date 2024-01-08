@@ -43,7 +43,7 @@ struct social
     int id;
     char *name;
     struct date creation_date;
-    char **content;
+    char *content;
     struct social *next;
 
     struct individual *individual;
