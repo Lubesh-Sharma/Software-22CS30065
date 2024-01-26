@@ -1,0 +1,76 @@
+1
+individual
+1
+Lubesh Kumar Sharma
+23 03 2005
+Y
+This is me Personal
+23 03 2004
+1
+individual
+2
+Aditya Jhajharia
+23 04 2006
+N
+23 03 2004
+1
+business
+3
+Mahindra Pvt. Ltd.
+19 19 1999
+Y
+This is a automobile company owned by me
+15.24 24.12
+1
+1
+2
+2
+2
+6
+0
+1
+group
+5
+Rajesh group of infrastructure
+12 12 2015
+Y
+This group is to control woods overflow
+Y
+1
+Y
+2
+Y
+6
+Y
+3
+Y
+100
+N
+1
+group
+30
+Asha Foundation
+23 01 2000
+N
+N
+1
+organisation
+7
+Nehru volleyball org.
+25 25 2016
+Y
+This is an organisation for volleyball players
+12.4 23.6
+Y
+2
+Y
+6
+N
+1
+individual
+6
+Manish Lamoria
+12 12 2012
+Y
+He is a residence of HJB hall
+23 03 2004

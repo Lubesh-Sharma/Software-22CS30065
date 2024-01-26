@@ -1,8 +1,22 @@
 #include "social.h"
 
-char *create_name(char *name)
+struct social *Convert_ID_to_Pointer(struct social *head, int ID)
 {
-    int bufferSize = 10; // Initial buffer size
+    struct social *ptr = head;
+    while (ptr != NULL)
+    {
+        if (ptr->id == ID)
+        {
+            return ptr;
+        }
+        ptr = ptr->next;
+    }
+    return ptr;
+}
+
+char *create_string(char *name)
+{
+    int bufferSize = 10;
     name = (char *)malloc(bufferSize * sizeof(char));
     if (name == NULL)
     {
@@ -18,11 +32,9 @@ char *create_name(char *name)
     {
         scanf("%c", &ch);
         name[index++] = ch;
-
-        // Check if the buffer is full, reallocate if necessary
         if (index == bufferSize - 1)
         {
-            bufferSize *= 2; // Double the buffer size
+            bufferSize *= 2;
             name = (char *)realloc(name, bufferSize * sizeof(char));
             if (name == NULL)
             {
@@ -31,7 +43,7 @@ char *create_name(char *name)
             }
         }
     } while (ch != '\n');
-    name[index] = '\0';
+    name[index - 1] = '\0';
     name = (char *)realloc(name, (strlen(name) + 2) * sizeof(char));
     if (name == NULL)
     {
@@ -42,121 +54,232 @@ char *create_name(char *name)
     return name;
 }
 
+struct social *create_individual(struct social *social)
+{
+    social->individual = (struct individual *)malloc(sizeof(struct individual));
+    if (social->individual == NULL)
+    {
+        printf("Memory Allocation error in individual\n");
+    }
+    social->individual->visited = 0;
+    printf("Enter the Birthday date(dd mm yyyy)\n");
+    scanf("%d %d %d", &social->individual->birthday.day, &social->individual->birthday.month, &social->individual->birthday.year);
+    printf("\n");
+    return social;
+}
+
+struct social *create_group(struct social *social)
+{
+    social->group = (struct group *)malloc(sizeof(struct group));
+    if (social->group == NULL)
+    {
+        printf("Memory allocation error in group\n");
+    }
+    int x;
+    int size = 0;
+    social->group->size = size;
+    social->group->linked = (int *)malloc(sizeof(int));
+    if (social->group->linked == NULL)
+    {
+        printf("Memory Allocation Error in storing Ids in group\n");
+    }
+    while (1)
+    {
+        char link_check;
+        printf("Do you want to wish to link an ID? (Y/N)\n");
+        scanf(" %c", &link_check);
+        if (link_check == 'y' || link_check == 'Y')
+        {
+            size++;
+            social->group->size = size;
+            social->group->linked = (int *)realloc(social->group->linked, size * sizeof(int));
+            if (social->group->linked == NULL)
+            {
+                printf("Memory Allocation Error in storing Ids in group\n");
+            }
+            printf("ID =  ");
+            scanf("%d", &social->group->linked[size - 1]);
+        }
+        else
+        {
+            printf("\n");
+            break;
+        }
+    }
+    return social;
+}
+
+struct social *create_business(struct social *social)
+{
+    social->business = (struct business *)malloc(sizeof(struct business));
+    if (social->business == NULL)
+    {
+        printf("Memory allocation error in business\n");
+    }
+    printf("Enter the Location(x y)\n");
+    scanf("%f %f", &social->business->location.x, &social->business->location.y);
+    int x;
+    int size = 0;
+    social->business->size_owner = size;
+    int size2 = 0;
+    social->business->size_customer = size2;
+    social->business->owner = (int *)malloc(sizeof(int));
+    if (social->business->owner == NULL)
+    {
+        printf("Memory allocation error in business owner array\n");
+    }
+    social->business->customer = (int *)malloc(sizeof(int));
+    if (social->business->customer == NULL)
+    {
+        printf("Memory allocation error in business customer array\n");
+    }
+    while (1)
+    {
+        printf("Enter 1 to link individual as owners 2 to link individuals as customers and 0 to exit\n");
+        scanf("%d", &x);
+        if (x == 0)
+        {
+            printf("\n");
+            break;
+        }
+        else if (x == 1)
+        {
+            size++;
+            social->business->size_owner = size;
+            social->business->owner = (int *)realloc(social->business->owner, size * sizeof(int));
+            if (social->business->owner == NULL)
+            {
+                printf("Memory allocation error in business owner array\n");
+            }
+            printf("ID =  ");
+            scanf("%d", &social->business->owner[size - 1]);
+        }
+        else
+        {
+            size2++;
+            social->business->size_customer = size2;
+            social->business->customer = (int *)realloc(social->business->customer, size2 * sizeof(int));
+            if (social->business->customer == NULL)
+            {
+                printf("Memory allocation error in business customer array\n");
+            }
+            printf("ID =  ");
+            scanf("%d", &social->business->customer[size2 - 1]);
+        }
+    }
+
+    return social;
+}
+
+struct social *create_organisation(struct social *social)
+{
+    social->organisation = (struct organisation *)malloc(sizeof(struct organisation));
+    if (social->organisation == NULL)
+    {
+        printf("Memory allocation error in organisation\n");
+    }
+    printf("Enter the Location(x y)\n");
+    scanf("%f %f", &social->organisation->location.x, &social->organisation->location.y);
+
+    int x;
+    int size = 0;
+    social->organisation->size = size;
+    social->organisation->linked = (int *)malloc(sizeof(int));
+    if (social->organisation->linked == NULL)
+    {
+        printf("Memory allocation error in storing ids in organisation\n");
+    }
+    while (1)
+    {
+        char link_check;
+        printf("Do you want to wish to link an ID? (Y/N)\n");
+        scanf(" %c", &link_check);
+        if (link_check == 'y' || link_check == 'Y')
+        {
+            size++;
+            social->organisation->size = size;
+            social->organisation->linked = (int *)realloc(social->organisation->linked, size * sizeof(int));
+            if (social->organisation->linked == NULL)
+            {
+                printf("Memory allocation error in storing ids in organisation\n");
+            }
+            printf("ID =  ");
+            scanf("%d", &social->organisation->linked[size - 1]);
+        }
+        else
+        {
+            printf("\n");
+            break;
+        }
+    }
+    return social;
+}
+
 struct social *create_social(struct social *head)
 {
     struct social *social = NULL;
     social = (struct social *)malloc(sizeof(struct social));
-    int y;
+    char *input;
+    printf("Enter the node type you wish to create (individual, group, business, organisation)\n");
+    input = create_string(input);
 
-    printf("Input 1 for individual, 2 for group, 3 for business, 4 for organisation\n");
-    scanf("%d", &y);
-
-    printf("Enter the ID\n");
-    scanf("%d", &social->id);
+    while (1)
+    {
+        printf("Enter the ID\n");
+        scanf("%d", &social->id);
+        if (Convert_ID_to_Pointer(head, social->id) != NULL)
+        {
+            printf("This ID is already present\n");
+        }
+        else
+        {
+            break;
+        }
+    }
 
     printf("Enter the name\n");
-    social->name = create_name(social->name);
+    social->name = create_string(social->name);
 
     printf("Enter the creation date(dd mm yyyy)\n");
     scanf("%d %d %d", &social->creation_date.day, &social->creation_date.month, &social->creation_date.year);
 
     social->content = NULL;
-    printf("Enter the content of the node\n");
-    social->content = create_name(social->content);
+
+    char v;
+    printf("Do you wish to enter the content right now? (Y|N)\n");
+    scanf(" %c", &v);
+    if (v == 'Y' || v == 'y')
+    {
+        printf("Enter the content of the node\n");
+        social->content = create_string(social->content);
+    }
 
     social->individual = NULL;
     social->group = NULL;
     social->organisation = NULL;
     social->business = NULL;
 
-    if (y == 1)
+    if (!strcmp("individual", input))
     {
-        social->individual = (struct individual *)malloc(sizeof(struct individual));
-        printf("Enter the Birthday date(dd mm yyyy)\n");
-        scanf("%d %d %d", &social->individual->birthday.day, &social->individual->birthday.month, &social->individual->birthday.year);
+        social = create_individual(social);
     }
-    else if (y == 2)
+    else if (!strcmp("group", input))
     {
-        social->group = (struct group *)malloc(sizeof(struct group));
-        int x;
-        int size = 0;
-        social->group->linked = (int *)malloc(sizeof(int));
-        while (1)
-        {
-            printf("Enter 1 to link individual to group and 0 to exit\n");
-            scanf("%d", &x);
-            if (x == 0)
-            {
-                break;
-            }
-            else
-            {
-                size++;
-                social->group->linked = (int *)realloc(social->group->linked, x * sizeof(int));
-                printf("ID =  ");
-                scanf("%d", &social->group->linked[size - 1]);
-            }
-        }
+        social = create_group(social);
     }
-    else if (y == 3)
+    else if (!strcmp("business", input))
     {
-        social->business = (struct business *)malloc(sizeof(struct individual));
-        printf("Enter the Location(x y)\n");
-        scanf("%f %f", &social->business->location.x, &social->business->location.y);
-        int x;
-        int size = 0;
-        int size2 = 0;
-        social->business->owner = (int *)malloc(sizeof(int));
-        social->business->customer = (int *)malloc(sizeof(int));
-        while (1)
-        {
-            printf("Enter 1 to link individual as owners 2 to link individuals as customers and 0 to exit\n");
-            scanf("%d", &x);
-            if (x == 0)
-            {
-                break;
-            }
-            else if (x == 1)
-            {
-                size++;
-                social->business->owner = (int *)realloc(social->business->owner, size * sizeof(int));
-                printf("ID =  ");
-                scanf("%d", &social->business->owner[size - 1]);
-            }
-            else
-            {
-                size2++;
-                social->business->customer = (int *)realloc(social->business->customer, size2 * sizeof(int));
-                printf("ID =  ");
-                scanf("%d", &social->business->customer[size2 - 1]);
-            }
-        }
+        social = create_business(social);
+    }
+    else if (!strcmp("organisation", input))
+    {
+        social = create_organisation(social);
     }
     else
     {
-        social->organisation = (struct organisation *)malloc(sizeof(struct organisation));
-        printf("Enter the Location(x y)\n");
-        scanf("%f %f", &social->organisation->location.x, &social->organisation->location.y);
-
-        int x;
-        int size = 0;
-        social->organisation->linked = (int *)malloc(sizeof(int));
-        while (1)
-        {
-            printf("Enter 1 to link individual to group and 0 to exit\n");
-            scanf("%d", &x);
-            if (x == 0)
-            {
-                break;
-            }
-            else
-            {
-                size++;
-                social->organisation->linked = (int *)realloc(social->organisation->linked, x * sizeof(int));
-                printf("ID =  ");
-                scanf("%d", &social->organisation->linked[size - 1]);
-            }
-        }
+        printf("Wrong input\tenter again!\n");
+        free(social);
+        return head;
     }
     social->next = head;
     return social;
@@ -164,44 +287,38 @@ struct social *create_social(struct social *head)
 
 struct social *delete_social(struct social *head, int ID)
 {
-    // Initialize pointers for traversal
+    int count = 0;
     struct social *current = head;
     struct social *previous = NULL;
-
-    // Traverse the linked list
     while (current != NULL)
     {
-        // Check if the current node has the specified ID
         if (current->id == ID)
         {
-            // If it's the head node, update the head
+            count = 1;
             if (previous == NULL)
             {
                 head = current->next;
             }
             else
             {
-                // Otherwise, update the previous node's next pointer
                 previous->next = current->next;
             }
-
-            // Free the memory of the node to be deleted
             free(current);
 
             printf("group with ID %d deleted.\n", ID);
-
-            // Return the updated head of the linked list
             return head;
         }
-
-        // Move to the next node
         previous = current;
         current = current->next;
+    }
+    if (count == 0)
+    {
+        printf("The Id is not found\n");
     }
     return head;
 }
 
-int search_id(int ID, struct social *head)
+int search_id_type(int ID, struct social *head)
 {
     struct social *ptr = head;
     while (ptr != NULL)
@@ -225,402 +342,435 @@ int search_id(int ID, struct social *head)
                 return 4;
             }
         }
+        ptr = ptr->next;
     }
     return 0;
 }
 
-struct social *convert_idTO_pointer(struct social *head, int ID)
+void print_details(struct social *ptr, struct social *head, int x)
 {
-    struct social *ptr = head;
-    while (ptr != NULL)
+    if (ptr != NULL)
     {
-        if (ptr->id == ID)
+        printf("ID = %d\n", ptr->id);
+        if (x == 0)
         {
-            return ptr;
+            printf("name = %s\n", ptr->name);
+            printf("creation_date = %2d-%2d-%4d\n", ptr->creation_date.day, ptr->creation_date.month, ptr->creation_date.year);
+            printf("\nThe content posted by this node is\n%s\n\n", ptr->content);
         }
-        ptr = ptr->next;
-    }
-    if (ptr == NULL)
-    {
-        printf("The ID is not found\n");
-    }
-    return ptr;
-}
-
-void print_details(struct social *ptr, struct social *head)
-{
-    printf("ID = %d\n", ptr->id);
-    printf("name = %s\n", ptr->name);
-    printf("creation_date = %2d-%2d-%4d\n", ptr->creation_date.day, ptr->creation_date.month, ptr->creation_date.year);
-    printf("The content posted by this node is\n%s\n", ptr->content);
-    int size;
-    if (ptr->individual != NULL)
-    {
-        printf("The birthdate of individual is %2d-%2d-%4d\n", ptr->individual->birthday.day, ptr->individual->birthday.month, ptr->individual->birthday.year);
-
-        printf("The group in which the individual is a member of are\n");
-        struct social *checker = head;
-        while (checker != NULL)
+        if (ptr->individual != NULL)
         {
-            if (checker->group != NULL)
+            if (x == 0)
             {
-                size = sizeof(checker->group->linked) / 4;
-                for (int i = 0; i < size; i++)
+                printf("The birthdate of individual is %2d-%2d-%4d\n", ptr->individual->birthday.day, ptr->individual->birthday.month, ptr->individual->birthday.year);
+            }
+            printf("The group in which the individual is a member of are ID no.\t");
+            struct social *checker = head;
+            while (checker != NULL)
+            {
+                if (checker->group != NULL)
                 {
-                    if (checker->group->linked[i] == ptr->id)
+                    for (int i = 0; i < checker->group->size; i++)
                     {
-                        printf("%d ", &checker->id);
+                        if (checker->group->linked[i] == ptr->id)
+                        {
+                            printf("%d ", checker->id);
+                        }
                     }
                 }
                 checker = checker->next;
             }
-        }
+            printf("\n");
 
-        printf("The organisation in which the individual is a member of are\n");
-        struct social *checker1 = head;
-        while (checker1 != NULL)
-        {
-            if (checker1->organisation != NULL)
+            printf("The organisation in which the individual is a member of are ID no.\t");
+            struct social *checker1 = head;
+            while (checker1 != NULL)
             {
-                size = sizeof(checker1->organisation->linked) / 4;
-                for (int i = 0; i < size; i++)
+                if (checker1->organisation != NULL)
                 {
-                    if (checker1->organisation->linked[i] == ptr->id)
+                    for (int i = 0; i < checker1->organisation->size; i++)
                     {
-                        printf("%d ", &checker1->id);
+                        if (checker1->organisation->linked[i] == ptr->id)
+                        {
+                            printf("%d ", checker1->id);
+                        }
                     }
                 }
                 checker1 = checker1->next;
             }
-        }
+            printf("\n");
 
-        printf("The business in which the individual is a owner are\n");
-        struct social *checker2 = head;
-        while (checker2 != NULL)
-        {
-            if (checker2->business != NULL)
+            printf("The business in which the individual is a owner are ID no.\t");
+            struct social *checker2 = head;
+            while (checker2 != NULL)
             {
-                size = sizeof(checker2->business->owner) / 4;
-                for (int i = 0; i < size; i++)
+                if (checker2->business != NULL && checker2->business->owner != NULL)
                 {
-                    if (checker2->business->owner[i] == ptr->id)
+                    for (int i = 0; i < checker2->business->size_owner; i++)
                     {
-                        printf("%d ", &checker2->id);
+                        if (checker2->business->owner[i] == ptr->id)
+                        {
+                            printf("%d ", checker2->id);
+                        }
                     }
                 }
                 checker2 = checker2->next;
             }
-        }
+            printf("\n");
 
-        printf("The business in which the individual is a customer are\n");
-        struct social *checker3 = head;
-        while (checker3 != NULL)
-        {
-            if (checker3->business != NULL)
+            printf("The business in which the individual is a customer are ID no.\t");
+            struct social *checker3 = head;
+            while (checker3 != NULL)
             {
-                size = sizeof(checker3->business->customer) / 4;
-                for (int i = 0; i < size; i++)
+                if (checker3->business != NULL && checker3->business->customer != NULL)
                 {
-                    if (checker3->business->customer[i] == ptr->id)
+                    for (int i = 0; i < checker3->business->size_customer; i++)
                     {
-                        printf("%d ", &checker2->id);
+                        if (checker3->business->customer[i] == ptr->id)
+                        {
+                            printf("%d ", checker3->id);
+                        }
                     }
                 }
                 checker3 = checker3->next;
             }
+            printf("\n");
+        }
+        else if (ptr->group != NULL)
+        {
+            printf("The business' members of this group are ID no.\t");
+            for (int i = 0; i < ptr->group->size; i++)
+            {
+                if (search_id_type(ptr->group->linked[i], head) == 2)
+                {
+                    printf("%d  ", ptr->group->linked[i]);
+                }
+            }
+            printf("\n");
+            printf("The Individual members of this group are ID no.\t");
+            for (int i = 0; i < ptr->group->size; i++)
+            {
+                if (search_id_type(ptr->group->linked[i], head) == 1)
+                {
+                    printf("%d  ", ptr->group->linked[i]);
+                }
+            }
+            printf("\n");
+        }
+        else if (ptr->business != NULL)
+        {
+            if (x == 0)
+            {
+                printf("The location of the business is (%f , %f)\n", ptr->business->location.x, ptr->business->location.y);
+            }
+            printf("The Owners of this business are ID no.\t");
+            for (int i = 0; i < ptr->business->size_owner; i++)
+            {
+                if (search_id_type(ptr->business->owner[i], head) == 1)
+                {
+                    printf("%d  ", ptr->business->owner[i]);
+                }
+            }
+            printf("\n");
+            printf("The Customers of this business are ID no.\t");
+            for (int i = 0; i < ptr->business->size_customer; i++)
+            {
+                if (search_id_type(ptr->business->customer[i], head) == 1)
+                {
+                    printf("%d  ", ptr->business->customer[i]);
+                }
+            }
+            printf("\n");
+        }
+        else if (ptr->organisation != NULL)
+        {
+            if (x == 0)
+            {
+                printf("The location of the organisation is (%f , %f)\n", ptr->organisation->location.x, ptr->organisation->location.y);
+            }
+            printf("The Individual members of this organisation are ID no.\t");
+            for (int i = 0; i < ptr->organisation->size; i++)
+            {
+                if (search_id_type(ptr->organisation->linked[i], head) == 1)
+                {
+                    printf("%d  ", ptr->organisation->linked[i]);
+                }
+            }
+            printf("\n");
         }
     }
-    else if (ptr->group != NULL)
+    printf("\n************************************************************************************************************************************************\n");
+}
+
+int match_strings(char *string, char *search)
+{
+    int stringLen = 0;
+    if (string != NULL)
     {
-        printf("The business' members of this group are \n");
-        size = sizeof(ptr->group->linked) / 4;
-        for (int i = 0; i < size; i++)
-        {
-            if (search_id(ptr->group->linked[i], head) == 2)
-            {
-                printf("%d  ", ptr->group->linked[i]);
-            }
-        }
-        printf("The Individual members of this group are \n");
-        for (int i = 0; i < size; i++)
-        {
-            if (search_id(ptr->group->linked[i], head) == 1)
-            {
-                printf("%d  ", ptr->group->linked[i]);
-            }
-        }
+        stringLen = strlen(string);
     }
-    else if (ptr->business != NULL)
+    int searchLen = 0;
+    if (search != NULL)
     {
-        printf("The location of the business is (%f , %f)", ptr->business->location.x, ptr->business->location.y);
-        printf("The Owners of this business are \n");
-        size = sizeof(ptr->business->owner) / 4;
-        for (int i = 0; i < size; i++)
-        {
-            if (search_id(ptr->business->owner[i], head) == 1)
-            {
-                printf("%d  ", ptr->business->owner[i]);
-            }
-        }
-        printf("\n");
-        printf("The Customers of this business are \n");
-        size = sizeof(ptr->business->customer) / 4;
-        for (int i = 0; i < size; i++)
-        {
-            if (search_id(ptr->business->customer[i], head) == 1)
-            {
-                printf("%d  ", ptr->business->customer[i]);
-            }
-        }
-        printf("\n");
+        searchLen = strlen(search);
     }
-    else if (ptr->organisation != NULL)
+
+    if (searchLen > stringLen)
     {
-        printf("The location of the organisation is (%f , %f)", ptr->organisation->location.x, ptr->organisation->location.y);
-        printf("The Individual members of this organisation are \n");
-        size = sizeof(ptr->organisation->linked) / 4;
-        for (int i = 0; i < size; i++)
-        {
-            if (search_id(ptr->organisation->linked[i], head) == 1)
-            {
-                printf("%d  ", ptr->organisation->linked[i]);
-            }
-        }
-        printf("\n");
+        return 0;
     }
+
+    for (int i = 0; i <= stringLen - searchLen; ++i)
+    {
+        if (strncasecmp(string + i, search, searchLen) == 0)
+        {
+            return 1;
+        }
+    }
+
+    return 0;
 }
 
 void search_name(struct social *head)
 {
+    int count = 0;
     char *search = NULL;
     printf("Enter name\n");
-    search = create_name(search);
+    search = create_string(search);
     struct social *ptr = head;
     while (ptr != NULL)
     {
-        if (strcmp(ptr->name, search))
+        if (match_strings(ptr->name, search) == 1)
         {
-            print_hop_list(ptr, head);
+            count = 1;
+            print_details(ptr, head,0);
         }
         ptr = ptr->next;
+    }
+    if (count == 0)
+    {
+        printf("There is no ID with the given name\n");
     }
 }
 
 void search_type(struct social *head)
 {
+    int count = 0;
     char *search = NULL;
     printf("Enter type\n");
-    search = create_name(search);
+    search = create_string(search);
     struct social *ptr = head;
-    if (strcmp("organisation", search))
+    if (!strcmp("organisation", search))
     {
         while (ptr != NULL)
         {
             if (ptr->organisation != NULL)
             {
-                print_hop_list(ptr, head);
+                count = 1;
+                print_details(ptr, head,0);
             }
             ptr = ptr->next;
         }
     }
-    else if (strcmp("business", search))
+    else if (!strcmp("business", search))
     {
         while (ptr != NULL)
         {
             if (ptr->business != NULL)
             {
-                print_hop_list(ptr, head);
+                count = 1;
+                print_details(ptr, head,0);
             }
             ptr = ptr->next;
         }
     }
-    else if (strcmp("individual", search))
+    else if (!strcmp("individual", search))
     {
         while (ptr != NULL)
         {
             if (ptr->individual != NULL)
             {
-                print_hop_list(ptr, head);
+                count = 1;
+                print_details(ptr, head,0);
             }
             ptr = ptr->next;
         }
     }
-    else if (strcmp("group", search))
+    else if (!strcmp("group", search))
     {
         while (ptr != NULL)
         {
             if (ptr->group != NULL)
             {
-                print_hop_list(ptr, head);
+                count = 1;
+                print_details(ptr, head,0);
             }
             ptr = ptr->next;
         }
+    }
+    if (count == 0)
+    {
+        printf("There is no %s node present\n", search);
     }
 }
 
 void search_birthday(struct social *head)
 {
+    int count = 0;
     struct date search;
     printf("Enter date(dd mm yy)\n");
     scanf("%d %d %d", &search.day, &search.month, &search.year);
     struct social *ptr = head;
     while (ptr != NULL)
     {
-        if (search.day == ptr->individual->birthday.day && search.month == ptr->individual->birthday.month && search.year == ptr->individual->birthday.year)
+        if (ptr->individual != NULL)
         {
-            print_hop_list(ptr, head);
+            if ((search.day == ptr->individual->birthday.day) && (search.month == ptr->individual->birthday.month) && (search.year == ptr->individual->birthday.year))
+            {
+                print_details(ptr, head,0);
+                count = 1;
+            }
         }
         ptr = ptr->next;
     }
+    if (count == 0)
+    {
+        printf("There is no indivial with the birthdate %2d-%2d-%4d\n", search.day, search.month, search.year);
+    }
 }
 
-struct social *content(struct social *head, int ID, int num)
+struct social *add_content(struct social *head, int ID)
 {
+    int count = 0;
     struct social *ptr = head;
     while (ptr != NULL)
     {
         if (ptr->id == ID)
         {
-            if (num == 0)
-            {
-                printf("Enter the content\n");
-                ptr->content = create_name(ptr->content);
-            }
-            else
-            {
-                if (ptr->content == NULL)
-                {
-                    printf("Node does not have any content.\n");
-                }
-                else
-                {
-                    printf("The content is\n%s\n", ptr->content);
-                }
-            }
+            count = 1;
+            printf("Enter the content\n");
+            ptr->content = NULL;
+            ptr->content = create_string(ptr->content);
         }
         ptr = ptr->next;
+    }
+    if (count == 0)
+    {
+        printf("The Id you had given is not found enter again\n");
     }
     return head;
 }
 
-void print_content(struct social *head, struct social *ptr)
+void print_content_organisation(struct social *head, int ID)
 {
-    int size;
-    if (ptr->individual != NULL)
+    if (search_id_type(ID, head) == 1)
     {
-        struct social *checker = head;
-        while (checker != NULL)
+        struct social *ptr = NULL;
+        ptr = Convert_ID_to_Pointer(head, ID);
+        ptr->individual->visited = 1;
+        struct social *nptr = head;
+        while (nptr != NULL)
         {
-            if (checker->group != NULL)
+            if (nptr->organisation != NULL)
             {
-                size = sizeof(checker->group->linked) / 4;
-                for (int i = 0; i < size; i++)
+                for (int i = 0; i < nptr->organisation->size; i++)
                 {
-                    if (checker->group->linked[i] == ptr->id)
+                    if (nptr->organisation->linked[i] == ID)
                     {
-                        head = content(head, ptr->id, 1);
+                        for (int j = 0; j < nptr->organisation->size; j++)
+                        {
+                            struct social *nnptr = Convert_ID_to_Pointer(head, nptr->organisation->linked[j]);
+                            if (nnptr != NULL)
+                            {
+                                if (nnptr->individual != NULL)
+                                {
+                                    if (nnptr->individual->visited == 0)
+                                    {
+                                        printf("ID =%d CONTENT=\n%s\n\n", nnptr->id, nnptr->content);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-                checker = checker->next;
             }
-        }
-        struct social *checker1 = head;
-        while (checker1 != NULL)
-        {
-            if (checker1->organisation != NULL)
-            {
-                size = sizeof(checker1->organisation->linked) / 4;
-                for (int i = 0; i < size; i++)
-                {
-                    if (checker1->organisation->linked[i] == ptr->id)
-                    {
-                        head = content(head, ptr->id, 1);
-                    }
-                }
-                checker1 = checker1->next;
-            }
-        }
-        struct social *checker2 = head;
-        while (checker2 != NULL)
-        {
-            if (checker2->business != NULL)
-            {
-                size = sizeof(checker2->business->owner) / 4;
-                for (int i = 0; i < size; i++)
-                {
-                    if (checker2->business->owner[i] == ptr->id)
-                    {
-                        head = content(head, ptr->id, 1);
-                    }
-                }
-                checker2 = checker2->next;
-            }
-        }
-        struct social *checker3 = head;
-        while (checker3 != NULL)
-        {
-            if (checker3->business != NULL)
-            {
-                size = sizeof(checker3->business->customer) / 4;
-                for (int i = 0; i < size; i++)
-                {
-                    if (checker3->business->customer[i] == ptr->id)
-                    {
-                        head = content(head, ptr->id, 1);
-                    }
-                }
-                checker3 = checker3->next;
-            }
+            nptr = nptr->next;
         }
     }
-    else if (ptr->group != NULL)
+    else
     {
-        size = sizeof(ptr->group->linked) / 4;
-        for (int i = 0; i < size; i++)
+        printf("Wrong ID\n");
+    }
+}
+
+void print_content_group(struct social *head, int ID)
+{
+    if (search_id_type(ID, head) == 1)
+    {
+        struct social *ptr = NULL;
+        ptr = Convert_ID_to_Pointer(head, ID);
+        ptr->individual->visited = 1;
+        struct social *nptr = head;
+        while (nptr != NULL)
         {
-            if (search_id(ptr->group->linked[i], head) == 2)
+            if (nptr->group != NULL)
             {
-                head = content(head, ptr->group->linked[i], 1);
+                for (int i = 0; i < nptr->group->size; i++)
+                {
+                    if (nptr->group->linked[i] == ID)
+                    {
+                        for (int j = 0; j < nptr->group->size; j++)
+                        {
+                            struct social *nnptr = Convert_ID_to_Pointer(head, nptr->group->linked[j]);
+                            if (nnptr != NULL)
+                            {
+                                if (nnptr->individual != NULL)
+                                {
+                                    if (nnptr->individual->visited == 0)
+                                    {
+                                        printf("ID =%d CONTENT=\n%s\n\n", nnptr->id, nnptr->content);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
-        }
-        for (int i = 0; i < size; i++)
-        {
-            if (search_id(ptr->group->linked[i], head) == 1)
-            {
-                head = content(head, ptr->group->linked[i], 1);
-            }
+            nptr = nptr->next;
         }
     }
-    else if (ptr->business != NULL)
+    else
     {
-        size = sizeof(ptr->business->owner) / 4;
-        for (int i = 0; i < size; i++)
-        {
-            if (search_id(ptr->business->owner[i], head) == 1)
-            {
-                head = content(head, ptr->business->owner[i], 1);
-            }
-        }
-        size = sizeof(ptr->business->customer) / 4;
-        for (int i = 0; i < size; i++)
-        {
-            if (search_id(ptr->business->customer[i], head) == 1)
-            {
-                head = content(head, ptr->business->customer[i], 1);
-            }
-        }
+        printf("Wrong ID\n");
     }
-    else if (ptr->organisation != NULL)
+}
+
+void print_content(struct social *head)
+{
+
+    int ID;
+    printf("Enter the ID\t");
+    scanf("%d", &ID);
+    print_content_group(head, ID);
+    print_content_organisation(head, ID);
+}
+
+void search_content(char *search, struct social *head)
+{
+    int count = 0;
+    struct social *ptr = head;
+    while (ptr != NULL)
     {
-        size = sizeof(ptr->organisation->linked) / 4;
-        for (int i = 0; i < size; i++)
+        if (match_strings(ptr->content, search))
         {
-            if (search_id(ptr->organisation->linked[i], head) == 1)
-            {
-                head = content(head, ptr->organisation->linked[i], 1);
-            }
+            count = 1;
+            printf("ID = %d Content is \n%s\n", ptr->id, ptr->content);
         }
-        printf("\n");
+        ptr = ptr->next;
+    }
+    if (count == 0)
+    {
+        printf("NO ID's with same content found\n");
     }
 }
 
@@ -630,7 +780,7 @@ int main()
     while (1)
     {
         int y;
-        printf("Input 0 to exit\n      1 to create a node\n      2 to delete a node\n      3 to search using name\n      4 to search using type\n      5 to search using birthday\n      6 to print hop_list\n      7 to add content to a node\n      8 to search a node\n      9 to print the content of nodes linked to a given node\n      10 to print all the nodes\n");
+        printf("Input 0 to exit\n      1 to create a node\n      2 to delete a node\n      3 to search using name\n      4 to search using type\n      5 to search using birthday\n      6 to print hop_list\n      7 to add content to a node\n      8 to search a node's content\n      9 to print the content of nodes linked to a given node\n      10 to print all the nodes\n");
         scanf("%d", &y);
         if (y == 0)
         {
@@ -662,38 +812,44 @@ int main()
         else if (y == 6)
         {
             int Hop_id;
+            printf("Enter the ID you wish to print details\n");
             scanf("%d", &Hop_id);
-            struct social *ptr = convert_idTO_pointer(head, Hop_id);
-            print_hop_list(ptr, head);
+            struct social *ptr = Convert_ID_to_Pointer(head, Hop_id);
+            if (ptr == NULL)
+            {
+                printf("THe ID is not found\n");
+            }
+            print_details(ptr, head, 1);
         }
         else if (y == 7)
         {
             int ID;
             printf("Enter the ID in which you wish to add content\n");
             scanf("%d", &ID);
-            head = content(head, ID, 0);
+            head = add_content(head, ID);
         }
         else if (y == 8)
         {
-            int ID;
-            printf("Enter the node you wish to print the content\n");
-            scanf("%d", &ID);
-            head = content(head, ID, 1);
+            char *search = NULL;
+            printf("Enter the content to be searched\n");
+            search = create_string(search);
+            search_content(search, head);
         }
         else if (y == 9)
         {
-            int ID;
-            printf("Enter the ID\n");
-            scanf("%d", &ID);
-            struct social *ptr = convert_idTO_pointer(head, ID);
-            print_content(head, ptr);
+            print_content(head);
         }
         else if (y == 10)
         {
             struct social *ptr = head;
+            if (ptr == NULL)
+            {
+                printf("There is no nodes present\n");
+                printf("***********************************************************************************************************************************************\n");
+            }
             while (ptr != NULL)
             {
-                print_hop_list(ptr, head);
+                print_details(ptr, head,0);
                 ptr = ptr->next;
             }
         }
@@ -702,4 +858,5 @@ int main()
             printf("You inputed wrong input\n\n");
         }
     }
+    return 0;
 }
